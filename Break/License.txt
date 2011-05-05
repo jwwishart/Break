@@ -1,0 +1,11 @@
+﻿DefaultSound.wav 
+================
+DefaultSound.wav was originally called 62964_wraithguard01_Deep_Bell.wav and is
+licensed under a Creative Commons Sampling Plus 1.0 License.
+The author of this file is "wraithguard01" on http://www.freesound.org. The original page where
+this file was downloaded was here: http://www.freesound.org/samplesViewSingle.php?id=62964
+and a the original wav file can be downloaded 
+here: http://www.freesound.org/download/62964/62964_wraithguard01_Deep_Bell.wav
+
+Break License
+================
