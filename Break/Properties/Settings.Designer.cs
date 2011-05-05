@@ -26,12 +26,12 @@ namespace Break.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("5000")]
-        public int TimerInterval {
+        public int TimerIntervalMilliseconds {
             get {
-                return ((int)(this["TimerInterval"]));
+                return ((int)(this["TimerIntervalMilliseconds"]));
             }
             set {
-                this["TimerInterval"] = value;
+                this["TimerIntervalMilliseconds"] = value;
             }
         }
         
@@ -62,24 +62,24 @@ namespace Break.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public decimal BreakMinutes {
+        public decimal WorkDurationMinutes {
             get {
-                return ((decimal)(this["BreakMinutes"]));
+                return ((decimal)(this["WorkDurationMinutes"]));
             }
             set {
-                this["BreakMinutes"] = value;
+                this["WorkDurationMinutes"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool UseDefaultSound {
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        public decimal BreakDurationMinutes {
             get {
-                return ((bool)(this["UseDefaultSound"]));
+                return ((decimal)(this["BreakDurationMinutes"]));
             }
             set {
-                this["UseDefaultSound"] = value;
+                this["BreakDurationMinutes"] = value;
             }
         }
     }

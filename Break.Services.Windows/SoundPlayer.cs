@@ -14,7 +14,9 @@ namespace Break.Services
 
         private MediaPlayer _player;
         private Uri _soundfile;
+
         private bool _isPlaybackEnded = true;
+        private int _noOfTimesToPlay;
 
 
         // Events
@@ -23,11 +25,17 @@ namespace Break.Services
         public event SoundPlaybackEnded SoundPlaybackEnded;
 
         private void InternalSoundPlaybackEnded( object sender, EventArgs e ) {
-            _isPlaybackEnded = true;
-            OnSoundPlaybackEnded();
+            _noOfTimesToPlay -= 1;
+
+            if ( _noOfTimesToPlay == 0 ) 
+                OnSoundPlaybackEnded();
+            else
+                Play_Internal();
         }
 
         protected void OnSoundPlaybackEnded() {
+            this.IsPlaybackEnded = true;
+
             if ( SoundPlaybackEnded != null )
                 SoundPlaybackEnded( this, EventArgs.Empty );
         }
@@ -54,6 +62,9 @@ namespace Break.Services
             get {
                 return _isPlaybackEnded;
             }
+            private set {
+                _isPlaybackEnded = value;
+            }
         }
 
         public Uri SoundFile {
@@ -66,9 +77,19 @@ namespace Break.Services
         }
 
         public void Play() {
+            Play( 1 );
+        }
+
+        public void Play( int noOfTimes ) {
+            _noOfTimesToPlay = noOfTimes;
+
             _player.Open( this.SoundFile );
 
-            _isPlaybackEnded = false;
+            Play_Internal();
+        }
+
+        private void Play_Internal() {
+            this.IsPlaybackEnded = false;
 
             _player.Play();
         }
@@ -76,7 +97,7 @@ namespace Break.Services
         public void Stop() {
             _player.Stop();
 
-            _isPlaybackEnded = true;
+            OnSoundPlaybackEnded();
         }
 
         public string FileFilter {
@@ -110,7 +131,6 @@ namespace Break.Services
         }
 
         #endregion
-
 
     }
 }

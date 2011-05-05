@@ -52,7 +52,6 @@ namespace Break
             // TODO: Avoid issue where person presses play button and causes io exception as another process is using the wav file.
 
             if ( _soundPlayer == null ) {
-            
                 _soundPlayer = ServiceLocator.GetSoundPlayer();
                 _soundPlayer.SoundPlaybackEnded += new SoundPlaybackEnded( SoundPlayer_PlaybackEnded );
             }
@@ -70,8 +69,7 @@ namespace Break
                 _soundPlayer.Play();
                 lnkPlaySound.Text = "Stop Sound";
             } else {
-                _soundPlayer.Stop();
-                lnkPlaySound.Text = "Play Sound";
+                StopPlayingSound();
             }
         }
 
@@ -94,6 +92,15 @@ namespace Break
             if ( result == System.Windows.Forms.DialogResult.OK ) {
                 txtBreakSound.Text = ofdBreakSound.FileName;
             }
+        }
+
+        private void btnCancel_Click( object sender, EventArgs e ) {
+            StopPlayingSound();
+        }
+
+        private void StopPlayingSound() {
+            _soundPlayer.Stop();
+            lnkPlaySound.Text = "Play Sound";
         }
 
     }

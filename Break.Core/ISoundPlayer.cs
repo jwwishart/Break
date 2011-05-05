@@ -25,6 +25,7 @@ namespace Break.Core
         //
 
         void Play();
+        void Play( int noOfTimes );
         void Stop();
     }
 }

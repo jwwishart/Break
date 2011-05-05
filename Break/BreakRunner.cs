@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using Break.Core;
+using System.Diagnostics;
 
 namespace Break
 {
@@ -50,59 +52,54 @@ namespace Break
 
         public void Start() {
             _timer.Enabled = true;
-            _timer.Interval = Properties.Settings.Default.TimerInterval;
+            _timer.Interval = Properties.Settings.Default.TimerIntervalMilliseconds;
             _timer.Tick += new EventHandler( Timer_Ticked );
             _timer.Start();
         }
 
         void Timer_Ticked( object sender, EventArgs e ) {
             var useService = ServiceLocator.GetSystemUseService();
-            var systemTicks = useService.IdleInformation.SystemUptimeTicks;
+
+            // Track Working Time
+            //
 
             if ( track_startTime == 0 )
-                track_startTime = systemTicks; 
+                track_startTime = useService.IdleInformation.SystemUptimeTicks;
 
-            /*
-             * track_startTime : ticks that the user started the program
-             *    or when the system was reset
-             * track_workDurationCompletedCount : counts the number of
-             *    times that the use has completed a full hour(for example)
-             *    without having a break. If they do two hours then this
-             *    number would equal 2
-             *    
-             * Every Timer Ticked: 
-             *   1. Check whether user has gone over their work 
-             *      duration. Increment track_workDurationCompletedCount 
-             *      and play sound that many times
-             *   2. Check whether the user has been idle for the
-             *      specified break duration (ex 5 mins) and if they h
-             *      have then reset ALL 3 settings above.
-             * 
-             * We need to track the following:
-             * 1. How long the user has been using the system for
-             *    If this goes over BreakMintues then sound dong (increment
-             *    number of times over BreakMinutes)
-             *    if user has been gone for over BreakConsideredDuration
-             *    then reset all counts!
-             * 2. How long the user has NOT been using the system for
-             * 
-             * 
-             */
+            var ticksSinceStart = Environment.TickCount - track_startTime;
+            var workedMinutes = (ticksSinceStart / 1000 / 60);
 
-            ////var useService = ServiceLocator.GetSystemUseService();
-            //if ( (useService.IdleInformation.IdleTimeTicks / 1000 / 60)
-            //    >= (int)Properties.Settings.Default.BreakMinutes ) {
-            //        PlaySound();
-            //}
+            if ( workedMinutes >= (int)Properties.Settings.Default
+                .WorkDurationMinutes ) 
+            {
+                track_workDurationCompletedCount += 1;
 
-            var info = useService.IdleInformation;
+                // Reset the ticksSinceStart
+                track_startTime = useService.IdleInformation.SystemUptimeTicks;
 
+                // Play sound N number of times
+                PlaySound();
+            }
+
+            // Track Idle Time
+            //
+
+            if ( (int)Properties.Settings.Default.BreakDurationMinutes
+                <= useService.IdleInformation.IdleTimeTicks / 1000 / 60 ) {
+                    track_startTime = Environment.TickCount;
+                    track_workDurationCompletedCount = 0;
+            }
+
+        
             // NOTE: Below is Statistics Code for Testing - DONT REMOVE
-            //Console.WriteLine( "       Idle Minutes: {0} mins", (info.IdleTimeTicks / 1000 / 60) );
-            //Console.WriteLine( "System Uptime Ticks: {0} ticks", info.SystemUptimeTicks );
-            //Console.WriteLine( "   Last Input Ticks: {0} ticks", info.LastInputTicks);
-            //Console.WriteLine( "    Idle Time Ticks: {0} ticks", info.IdleTimeTicks);
-            //Console.WriteLine( " --- " );
+            var info = useService.IdleInformation;
+            Console.WriteLine( "       Idle Minutes: {0} mins", (info.IdleTimeTicks / 1000 / 60) );
+            Console.WriteLine( "System Uptime Ticks: {0} ticks", info.SystemUptimeTicks );
+            Console.WriteLine( "   Last Input Ticks: {0} ticks", info.LastInputTicks);
+            Console.WriteLine( "    Idle Time Ticks: {0} ticks", info.IdleTimeTicks);
+            Console.WriteLine( "      Logging Start: {0} ticks", track_startTime );
+            Console.WriteLine( "Work Duration Count: {0} ticks", track_workDurationCompletedCount );
+            Console.WriteLine( " --- " );
         }
 
         public void Stop() {
@@ -115,7 +112,7 @@ namespace Break
             soundService.SoundFile = new Uri( new FileInfo( "DefaultSound.wav" ).FullName );
             // TODO: setup configuration of sound file above for different...
             // available options
-            soundService.Play();
+            soundService.Play(track_workDurationCompletedCount);
         }
 
     }
