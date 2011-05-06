@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Break.Core
 {
-    public interface ISoundPlayer : IDisposable
+    public interface ISoundPlayer
     {
         // Events
         //

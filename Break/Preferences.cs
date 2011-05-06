@@ -26,11 +26,7 @@ namespace Break
         public Preferences() {
             InitializeComponent();
         }
-
-        ~Preferences() {
-            _soundPlayer.Dispose();
-        }
-
+        
 
         // Form Events
         //
@@ -40,8 +36,8 @@ namespace Break
 
             this.ofdBreakSound.InitialDirectory = Environment.GetFolderPath( Environment.SpecialFolder.MyMusic );
             this.ofdBreakSound.Filter = ServiceLocator.GetSoundPlayer().FileFilter;
-            this.txtBreakSound.Enabled = false;
-            this.btnBrowse_Sound.Enabled = false;
+
+            LoadSettings();
         }
 
         private void lnkPlaySound_LinkClicked( object sender, LinkLabelLinkClickedEventArgs e ) {
@@ -78,12 +74,15 @@ namespace Break
         }
 
         private void txtBreakSound_TextChanged( object sender, EventArgs e ) {
-
+            if ( File.Exists( txtBreakSound.Text ) ) {
+                txtBreakSound.BackColor = Color.LightGreen;
+            } else {
+                txtBreakSound.BackColor = Color.Pink;
+            }
         }
 
         private void cbUseCustomSound_CheckedChanged( object sender, EventArgs e ) {
-            txtBreakSound.Enabled = cbUseCustomSound.Checked;
-            btnBrowse_Sound.Enabled = cbUseCustomSound.Checked;
+            SetupSoundSelection();
         }
 
         private void btnBrowse_Sound_Click( object sender, EventArgs e ) {
@@ -98,9 +97,63 @@ namespace Break
             StopPlayingSound();
         }
 
+        private void btnOk_Click( object sender, EventArgs e ) {
+            // TODO: Validate that the sound file exists
+            StopPlayingSound();
+            SaveSettings();
+            this.Close();
+        }
+
+
+        // Private Methods
+        //
+
         private void StopPlayingSound() {
-            _soundPlayer.Stop();
+            if (_soundPlayer != null)
+                _soundPlayer.Stop();
             lnkPlaySound.Text = "Play Sound";
+        }
+
+        private void SetupSoundSelection( ) {
+            txtBreakSound.Enabled = cbUseCustomSound.Checked;
+            btnBrowse_Sound.Enabled = cbUseCustomSound.Checked;
+        }
+
+        private void SaveSettings() {
+            // Break Sound
+            Properties.Settings.Default.UseCustomSound = cbUseCustomSound.Checked;
+
+            if ( cbUseCustomSound.Checked )
+                Properties.Settings.Default.BreakSoundFile =
+                    txtBreakSound.Text;
+
+            // Work Duration
+            Properties.Settings.Default.WorkDurationMinutes =
+                nudWorkDuration.Value;
+
+            // Break Duration
+            Properties.Settings.Default.BreakDurationMinutes =
+                nudBreakDuration.Value;
+
+            Properties.Settings.Default.Save();
+        }
+
+        private void LoadSettings() {
+            // Break Sound
+            cbUseCustomSound.Checked = Properties.Settings.Default.UseCustomSound;
+
+            SetupSoundSelection();
+
+            if ( cbUseCustomSound.Checked )
+                txtBreakSound.Text = Properties.Settings.Default.BreakSoundFile;
+
+            // Work Duration
+            nudWorkDuration.Value
+                = Properties.Settings.Default.WorkDurationMinutes;
+
+            // Break Duration
+            nudBreakDuration.Value
+                = Properties.Settings.Default.BreakDurationMinutes;
         }
 
     }

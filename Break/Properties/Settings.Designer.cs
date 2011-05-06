@@ -61,7 +61,19 @@ namespace Break.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        public decimal BreakDurationMinutes {
+            get {
+                return ((decimal)(this["BreakDurationMinutes"]));
+            }
+            set {
+                this["BreakDurationMinutes"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("20")]
         public decimal WorkDurationMinutes {
             get {
                 return ((decimal)(this["WorkDurationMinutes"]));
@@ -73,13 +85,13 @@ namespace Break.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("5")]
-        public decimal BreakDurationMinutes {
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LoggerEnabled {
             get {
-                return ((decimal)(this["BreakDurationMinutes"]));
+                return ((bool)(this["LoggerEnabled"]));
             }
             set {
-                this["BreakDurationMinutes"] = value;
+                this["LoggerEnabled"] = value;
             }
         }
     }

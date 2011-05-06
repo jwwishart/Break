@@ -1,0 +1,1 @@
+﻿- Show time information in tooltip (update every tick)

@@ -49,7 +49,6 @@ namespace Break.Services
                 _player = new MediaPlayer();
                 _player.MediaEnded += new EventHandler( InternalSoundPlaybackEnded );
             } catch {
-                this.Dispose( true );
                 throw;
             }
         }
@@ -57,6 +56,13 @@ namespace Break.Services
 
         // Properties
         //
+
+        public string FileFilter {
+            get {
+                return
+                    "Wav (*.wav)|*.wav| MP3 (*.mp3)|*.mp3";
+            }
+        }
 
         public bool IsPlaybackEnded {
             get {
@@ -76,6 +82,10 @@ namespace Break.Services
             }
         }
 
+
+        // Public Methods
+        //
+
         public void Play() {
             Play( 1 );
         }
@@ -88,49 +98,21 @@ namespace Break.Services
             Play_Internal();
         }
 
-        private void Play_Internal() {
-            this.IsPlaybackEnded = false;
-
-            _player.Play();
-        }
-        
         public void Stop() {
             _player.Stop();
 
             OnSoundPlaybackEnded();
         }
 
-        public string FileFilter {
-            get {
-                return
-                    "Wav (*.wav)|*.wav| MP3 (*.mp3)|*.mp3";
-            }
+
+        // Private Methods
+        //
+
+        private void Play_Internal() {
+            this.IsPlaybackEnded = false;
+
+            _player.Play();
         }
-
-        #region "IDisposable"
-
-        private bool _isDisposed;
-
-        public void Dispose() {
-            if ( !_isDisposed )
-                Dispose( true );
-            GC.SuppressFinalize( this );
-        }
-
-        private void Dispose( bool disposing ) {
-            _isDisposed = true;
-
-            if ( disposing ) {
-                _isPlaybackEnded = true;
-
-                _player.Stop();
-                _player.MediaEnded -= new EventHandler( InternalSoundPlaybackEnded );
-                _player.Close();
-                _player = null;
-            }
-        }
-
-        #endregion
 
     }
 }

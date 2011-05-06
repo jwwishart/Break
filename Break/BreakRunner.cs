@@ -15,6 +15,7 @@ namespace Break
         private Preferences preferencesForm = null;
         private NotifyIcon _icon = null;
         private Timer _timer = new Timer();
+        private ISoundPlayer soundService = null;
         
         private int track_startTime = 0;
         private int track_workDurationCompletedCount = 0;
@@ -55,8 +56,32 @@ namespace Break
             _timer.Interval = Properties.Settings.Default.TimerIntervalMilliseconds;
             _timer.Tick += new EventHandler( Timer_Ticked );
             _timer.Start();
+
+            _icon.ContextMenu.MenuItems.Add( 0, new MenuItem( "Stop Alarm", new EventHandler( StopAlarm_Click ) ) );
+            _icon.ContextMenu.MenuItems.Add( 1, new MenuItem("-"));
+
+            _icon.MouseMove += new MouseEventHandler( Icon_MouseMove );
         }
 
+        void Icon_MouseMove( object sender, MouseEventArgs e ) {
+            var minutesWorked =  ((Environment.TickCount - track_startTime) / 1000 / 60);
+            var workDuration = Properties.Settings.Default.WorkDurationMinutes;
+
+            if ( minutesWorked >= workDuration ) {
+                _icon.Text = String.Format( "You've been working for {0} minutes.\nHave a Break",
+                minutesWorked);
+            } else {
+                _icon.Text = String.Format( "You've been working for {0} minutes.\nBreak in {1} minutes",
+                    minutesWorked,
+                    workDuration - minutesWorked );
+            }
+            
+        }
+
+        void StopAlarm_Click( object sender, EventArgs e ) {
+            StopSound();
+        }
+        
         void Timer_Ticked( object sender, EventArgs e ) {
             var useService = ServiceLocator.GetSystemUseService();
 
@@ -90,8 +115,7 @@ namespace Break
                     track_workDurationCompletedCount = 0;
             }
 
-        
-            // NOTE: Below is Statistics Code for Testing - DONT REMOVE
+            // NOTE: Below is Statistics Code for Testing - DONT REMOVE (YET!)
             var info = useService.IdleInformation;
             Console.WriteLine( "       Idle Minutes: {0} mins", (info.IdleTimeTicks / 1000 / 60) );
             Console.WriteLine( "System Uptime Ticks: {0} ticks", info.SystemUptimeTicks );
@@ -105,14 +129,26 @@ namespace Break
         public void Stop() {
             _timer.Stop();
             _timer.Enabled = false;
-        }
+        }    
 
         private void PlaySound() {
-            var soundService = ServiceLocator.GetSoundPlayer();
-            soundService.SoundFile = new Uri( new FileInfo( "DefaultSound.wav" ).FullName );
-            // TODO: setup configuration of sound file above for different...
-            // available options
+            if (soundService == null) 
+                soundService = ServiceLocator.GetSoundPlayer();
+
+            if ( Properties.Settings.Default.UseCustomSound ) {
+                soundService.SoundFile = new Uri( Properties.Settings.Default.BreakSoundFile );
+            } else {
+                soundService.SoundFile = new Uri( new FileInfo( "DefaultSound.wav" ).FullName );
+            }
+            
             soundService.Play(track_workDurationCompletedCount);
+        }
+
+        private void StopSound() {
+            if ( soundService != null ) {
+                soundService.Stop();
+                soundService = null;
+            }
         }
 
     }
