@@ -1,7 +1,7 @@
 Break is a small WinForms application that runs silently in the background.
 (Yes another one of those.)
 
-Featurs
+Features
 =======
 - Plays a sound after a specified duration indicating that you should
   take a break. The sound played and the duration for a given working period
