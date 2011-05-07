@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{1007485B-43CC-4F3F-8FC1-32AAAD4D60C4}</ProjectGuid>
+    <ProjectGuid>{583CF67C-B47E-49F2-A00C-C62ACEE10C35}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Break.Core</RootNamespace>
-    <AssemblyName>Break.Core</AssemblyName>
+    <RootNamespace>Break.Services.Linux</RootNamespace>
+    <AssemblyName>Break.Services.Linux</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -47,11 +47,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ISoundPlayer.cs" />
-    <Compile Include="ISystemUseService.cs" />
-    <Compile Include="LastInputInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SoundPlaybackEnded.cs" />
+    <Compile Include="SoundPlayer.cs" />
+    <Compile Include="SystemUseService.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -61,4 +59,10 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <ProjectReference Include="..\Break.Core\Break.Core.csproj">
+      <Project>{1007485B-43CC-4F3F-8FC1-32AAAD4D60C4}</Project>
+      <Name>Break.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>
